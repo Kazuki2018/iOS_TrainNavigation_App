@@ -9,7 +9,7 @@
 import UIKit
 import ISTimeline
 
-class Train_timetable: UIViewController {
+class Train_timetable: UIViewController{
     var Traintimetable: Array<Dictionary<String, String>> = []
     
     struct Station_Data: Codable{
@@ -25,8 +25,8 @@ class Train_timetable: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        let frame = CGRect(x: 0.0, y: 20.0, width: 500.0, height: 600.0)
+        view.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
+        let frame = CGRect(x: 175.0, y: 62.0, width: 200.0, height: 600.0)
         let timeline = ISTimeline(frame: frame)
         timeline.backgroundColor = .white
         timeline.bubbleColor = .init(red: 0.95, green: 0.95, blue: 0.95, alpha: 1.0)
@@ -35,6 +35,7 @@ class Train_timetable: UIViewController {
         timeline.pointDiameter = 9.0
         timeline.lineWidth = 4.0
         timeline.bubbleRadius = 0.0
+        loadcsvfile()
         display(table: self.Traintimetable[0], index: 0, timeline: timeline)
         
     }
@@ -56,52 +57,59 @@ class Train_timetable: UIViewController {
                 st_name = s
             }
         }
-        self.return_station_janame(Station_name: st_name, finished: {(isSuccess: Bool, ja_name: String) in
-            if isSuccess==true{
-                point.description = ja_name
-                point.lineColor = index % 2 == 0 ? .red : .green
-                point.pointColor = point.lineColor
-                timeline.points.append(point)
-                
-                if index+1 < self.Traintimetable.count {
-                    self.display(table: self.Traintimetable[index+1], index: index+1, timeline: timeline)
-                }else{
-                    
-                    self.view.addSubview(timeline)
-                }
-            }else{
-                print("cannot do")
-            }
-        })
+        var arr = st_name.components(separatedBy: ".")
+        let en_name = arr[3]
+        let ja_name = self.return_station_janame(en_name: en_name)
+        point.description = ja_name
+        point.lineColor = index % 2 == 0 ? .red : .green
+        point.pointColor = point.lineColor
+        timeline.points.append(point)
+        
+        if index+1 < self.Traintimetable.count {
+            self.display(table: self.Traintimetable[index+1], index: index+1, timeline: timeline)
+        }else{
+            
+            self.view.addSubview(timeline)
+        }
         // Do any additional setup after loading the view.
     }
     
-    func return_station_janame(Station_name: String, finished: @escaping (Bool, String)->Void){
-        var ja_name: String = ""
-        let url_string = "https://api-tokyochallenge.odpt.org/api/v4/odpt:Station?owl:sameAs=" + Station_name + "&acl:consumerKey=82b96ad4217fe1fc3868f9889f68bf5cd78ee157c41337526dec39b12a64a004"
-        let req_url = URL(string: url_string)
-        print(req_url!)
-        let req = URLRequest(url: req_url!)
-        let session = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
-        let task = session.dataTask(with: req, completionHandler: {(data, responce, error)  in
-            session.finishTasksAndInvalidate()
-            do {
-                let decoder = JSONDecoder()
-                let station = try decoder.decode([Station_Data].self, from: data!)
-                if station.count>0,  let n = station[0].station_object.ja{
-                    ja_name = n
-                }else {
-                    ja_name = "****"
-                }
-                let _ = finished(true, ja_name)
-            } catch {
-                print(error)
+    public var Station: Array<String> = Array(repeating:"", count: 1518)
+    
+    func loadcsvfile(){
+        do{
+            if let csvPath = Bundle.main.path(forResource: "Stations_utf8_2", ofType: "csv")
+            {
+                let csvData = try String(contentsOfFile: csvPath, encoding:String.Encoding.utf8)
+                //改行コードが\n一つになるようにします
+                var lineChange = csvData.replacingOccurrences(of: "\r", with: "\n")
+                lineChange = lineChange.replacingOccurrences(of: "\n\n", with: "\n")
+                //"\n"の改行コードで区切って、配列csvArrayに格納する
+                Station = lineChange.components(separatedBy: "\n")
             }
-        })
-        task.resume()
+        } catch {
+            print(error)
+        }
+    }
+    
+    func return_station_janame(en_name: String) -> String{
+        for data in Station{
+            let arr = data.components(separatedBy: ",")
+            if(arr.count == 3){
+                if (arr[2] == en_name) {
+                    return arr[0]
+                    
+                }
+            }
+        }
+        return "***"
     }
     
     
+    
+    @IBAction func back_button(_ sender: Any) {
+        self.dismiss(animated: true, completion: nil)
+    }
     
 
 }
