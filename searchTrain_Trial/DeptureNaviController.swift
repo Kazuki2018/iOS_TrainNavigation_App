@@ -464,6 +464,7 @@ class DeptureNaviController: UIViewController, UITableViewDelegate, UITableViewD
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "goTrainTimetable"{
             let St: Train_timetable = (segue.destination as? Train_timetable)!
+            St.modalPresentationStyle = .overCurrentContext
             let tagid: Int = sender as! Int
             if tagid == 0{
                 St.Traintimetable = self.sort_arriveTrain0[select_row_num].obj
@@ -639,5 +640,4 @@ class DeptureNaviController: UIViewController, UITableViewDelegate, UITableViewD
         return resizedImage!
     }
     
-
 }
