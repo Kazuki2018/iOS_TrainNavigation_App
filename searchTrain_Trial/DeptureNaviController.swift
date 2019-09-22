@@ -471,6 +471,9 @@ class DeptureNaviController: UIViewController, UITableViewDelegate, UITableViewD
             }else{
                 St.Traintimetable = self.sort_arriveTrain1[select_row_num].obj
             }
+        } else if segue.identifier == "goset_destination"{
+            let Dt: SettingTrainController = (segue.destination as? SettingTrainController)!
+            Dt.info = info
         }
     }
     
@@ -639,5 +642,16 @@ class DeptureNaviController: UIViewController, UITableViewDelegate, UITableViewD
         UIGraphicsEndImageContext()
         return resizedImage!
     }
+    
+    //
+    @IBAction func destination_setting(_ sender: Any) {
+        performSegue(withIdentifier: "goset_destination", sender: nil)
+    }
+    @IBOutlet weak var destination_name: UIButton!
+    
+    @IBAction func best_fordest(_ sender: Any) {
+        
+    }
+    
     
 }
