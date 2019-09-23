@@ -39,6 +39,15 @@ class DeptureNaviController: UIViewController, UITableViewDelegate, UITableViewD
         // Do any additional setup after loading the view.
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        if let indexPathForSelectedRow = arrive_train_table0.indexPathForSelectedRow {
+            arrive_train_table0.deselectRow(at: indexPathForSelectedRow, animated: true)
+        }
+        if let indexPathForSelectedRow = arrive_train_table1.indexPathForSelectedRow {
+            arrive_train_table1.deselectRow(at: indexPathForSelectedRow, animated: true)
+        }
+    }
+    
     var tr_status: [TrainStatus] = []
     var info: ViewController.TrainInfo?
     var descend_direction: String = ""
