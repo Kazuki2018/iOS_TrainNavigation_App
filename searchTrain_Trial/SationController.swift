@@ -115,6 +115,4 @@ class SationController: UIViewController, UISearchBarDelegate, UITableViewDataSo
         //precontroller.presetting(name: n)
         _ = navigationController?.popViewController(animated: true)
     }
-
-
 }
