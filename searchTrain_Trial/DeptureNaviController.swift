@@ -643,7 +643,7 @@ class DeptureNaviController: UIViewController, UITableViewDelegate, UITableViewD
         return resizedImage!
     }
     
-    //
+    //目的の降車駅を選択できるように修正
     @IBAction func destination_setting(_ sender: Any) {
         performSegue(withIdentifier: "goset_destination", sender: nil)
     }
